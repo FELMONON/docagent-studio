@@ -14,8 +14,6 @@ class LLMError(RuntimeError):
 class ChatMessage:
     role: str
     content: str
-    # Base64-encoded image(s), for vision-capable Ollama models.
-    images: list[str] | None = None
 
 
 class OllamaChatClient:
@@ -27,16 +25,10 @@ class OllamaChatClient:
 
     def chat(self, messages: list[ChatMessage]) -> str:
         url = f"{self.base_url}/api/chat"
-        msg_dicts: list[dict[str, Any]] = []
-        for m in messages:
-            d: dict[str, Any] = {"role": m.role, "content": m.content}
-            if m.images:
-                d["images"] = list(m.images)
-            msg_dicts.append(d)
         payload: dict[str, Any] = {
             "model": self.model,
             "stream": False,
-            "messages": msg_dicts,
+            "messages": [{"role": m.role, "content": m.content} for m in messages],
         }
         if self.options:
             payload["options"] = self.options

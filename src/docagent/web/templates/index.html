@@ -83,7 +83,6 @@
           <button class="tab active" data-tab="chat">Chat</button>
           <button class="tab" data-tab="search">Search</button>
           <button class="tab" data-tab="graph">Graph</button>
-          <button class="tab" data-tab="live">Live</button>
         </div>
 
         <div class="panel active" id="panel-chat">
@@ -115,68 +114,6 @@
           </div>
           <div class="results" id="graphResults"></div>
         </div>
-
-        <div class="panel" id="panel-live">
-          <div class="liveGrid">
-            <div class="liveCard">
-              <div class="cardTitle">Camera</div>
-              <video id="camVideo" class="video" autoplay playsinline muted></video>
-              <canvas id="camCanvas" class="hidden"></canvas>
-
-              <div class="row">
-                <button class="btn primary" id="btnCamStart">Start Camera</button>
-                <button class="btn" id="btnCamStop">Stop</button>
-                <button class="btn" id="btnCamSnap">Snapshot</button>
-              </div>
-
-              <div class="label">Snapshot Preview</div>
-              <img id="snapPreview" class="snap" alt="Snapshot preview" />
-              <div class="row">
-                <button class="btn" id="btnSnapClear">Clear Snapshot</button>
-              </div>
-
-              <div class="hint muted">
-                Snapshot Q&A requires a vision-capable Ollama model (e.g. a LLaVA/Llama-Vision tag).
-              </div>
-            </div>
-
-            <div class="liveCard">
-              <div class="cardTitle">Voice</div>
-              <div class="row">
-                <button class="btn primary" id="btnMicStart">Start Dictation</button>
-                <button class="btn" id="btnMicStop">Stop</button>
-                <button class="btn" id="btnSpeakToggle">Speak: Off</button>
-              </div>
-              <div class="label">Transcript</div>
-              <div class="transcript" id="transcript">(empty)</div>
-
-              <div class="sep"></div>
-
-              <div class="cardTitle">Ask</div>
-              <label class="label">Question (edit before sending)</label>
-              <textarea class="textarea" id="liveQuestion" rows="4" placeholder="Use dictation or type…"></textarea>
-
-              <div class="row">
-                <div class="col">
-                  <label class="label">Top-K (docs)</label>
-                  <input class="input mono" id="liveTopK" value="8" />
-                </div>
-                <div class="col">
-                  <label class="label">Vision Model (optional)</label>
-                  <input class="input mono" id="visionModel" placeholder="e.g. llava:latest" />
-                </div>
-              </div>
-
-              <div class="row">
-                <button class="btn primary" id="btnLiveAskDocs">Ask Docs</button>
-                <button class="btn" id="btnLiveAskVision">Ask Snapshot</button>
-              </div>
-
-              <div class="answer" id="liveAnswer"></div>
-              <div class="sources" id="liveSources"></div>
-            </div>
-          </div>
-        </div>
       </section>
     </main>
 
@@ -187,3 +124,4 @@
     <script src="/static/app.js"></script>
   </body>
 </html>
+
