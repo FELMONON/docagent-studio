@@ -1,3 +1,27 @@
+@font-face{
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/static/fonts/SpaceGrotesk-latin.woff2") format("woff2");
+}
+
+@font-face{
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/static/fonts/IBMPlexMono-latin-400.woff2") format("woff2");
+}
+
+@font-face{
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/static/fonts/IBMPlexMono-latin-600.woff2") format("woff2");
+}
+
 :root{
   --bg0:#0b1020;
   --bg1:#0f1b2d;
@@ -11,7 +35,7 @@
   --danger:#ff6b6b;
   --warn:#ffcc66;
   --ok:#59f0a7;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 *{box-sizing:border-box}
@@ -22,7 +46,7 @@ body{
   background: radial-gradient(1200px 700px at 15% 0%, #1b2948 0%, var(--bg0) 60%),
               radial-gradient(900px 600px at 85% 10%, #1a3c3a 0%, var(--bg0) 60%),
               linear-gradient(180deg, var(--bg0), var(--bg1));
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
 }
 
 .bg{position:fixed; inset:0; pointer-events:none; overflow:hidden}
@@ -211,4 +235,3 @@ body{
   .promptRow{flex-direction:column}
   .side{width:100%; flex-direction:row; align-items:flex-end}
 }
-
