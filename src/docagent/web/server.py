@@ -13,7 +13,7 @@ def create_app(*, default_db_path: str | None = None):
     from fastapi.staticfiles import StaticFiles
     from fastapi.templating import Jinja2Templates
 
-    from ..chat.llm import LLMError, OllamaChatClient
+    from ..chat.llm import ChatMessage, LLMError, OllamaChatClient
     from ..chat.rag import answer_question
     from ..config import Settings
     from ..graph.build import build_graph
@@ -249,6 +249,34 @@ def create_app(*, default_db_path: str | None = None):
             conn.close()
 
         return {"ok": True, "answer": ans.text, "sources": ans.sources}
+
+    @app.post("/api/vision")
+    def vision(payload: dict[str, Any]):
+        question = str(payload.get("question") or "").strip()
+        model = str(payload.get("model") or settings.ollama_model)
+        base_url = str(payload.get("base_url") or settings.ollama_base_url)
+        temperature = float(payload.get("temperature") if payload.get("temperature") is not None else settings.ollama_temperature)
+        image_b64 = payload.get("image_b64")
+
+        if not question:
+            return JSONResponse({"ok": False, "error": "question is required"}, status_code=400)
+        if not isinstance(image_b64, str) or not image_b64.strip():
+            return JSONResponse({"ok": False, "error": "image_b64 is required (base64 jpeg/png bytes, without data: prefix)"}, status_code=400)
+
+        try:
+            llm = OllamaChatClient(base_url=base_url, model=model, options={"temperature": temperature})
+            msgs = [
+                ChatMessage(
+                    role="system",
+                    content="You are a helpful assistant. Answer the user's question about the provided image. If you are unsure, say so.",
+                ),
+                ChatMessage(role="user", content=question, images=[image_b64.strip()]),
+            ]
+            ans = llm.chat(msgs)
+        except LLMError as e:
+            return JSONResponse({"ok": False, "error": str(e)}, status_code=502)
+
+        return {"ok": True, "answer": ans}
 
     @app.post("/api/graph/build")
     def graph_build(payload: dict[str, Any]):

@@ -76,6 +76,13 @@ docagent serve --db ./data/docs.db
 
 Then open `http://127.0.0.1:8000`.
 
+### Live (Camera + Voice)
+
+In the UI, open the **Live** tab:
+- **Camera**: Start camera, take a snapshot (stays local in your browser).
+- **Voice**: Dictation uses your browser's SpeechRecognition (works best in Chromium-based browsers). "Speak" uses your browser's TTS.
+- **Ask Snapshot**: requires a vision-capable Ollama model (example: `ollama pull llava:latest`) and sends the snapshot to `POST /api/vision`.
+
 ## Debugging
 
 Check local dependencies:

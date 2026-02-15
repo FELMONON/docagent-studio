@@ -237,6 +237,174 @@ async function onGraphQuery() {
   for (const e of ents) resEl.appendChild(graphEntityCard(e));
 }
 
+// ----------------------------
+// Live: Camera + Voice (client-side)
+// ----------------------------
+
+let camStream = null;
+let snapB64 = null;
+
+async function camStart() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    throw new Error("Camera API not supported in this browser.");
+  }
+  camStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+  $("camVideo").srcObject = camStream;
+}
+
+function camStop() {
+  const v = $("camVideo");
+  if (v && v.srcObject) v.srcObject = null;
+  if (camStream) {
+    for (const t of camStream.getTracks()) t.stop();
+    camStream = null;
+  }
+}
+
+function camSnap() {
+  const video = $("camVideo");
+  if (!video || !video.videoWidth) {
+    throw new Error("Camera is not running.");
+  }
+  const canvas = $("camCanvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+  $("snapPreview").src = dataUrl;
+  // Ollama expects raw base64, not a data URL prefix.
+  snapB64 = dataUrl.split(",")[1] || null;
+  return snapB64;
+}
+
+function snapClear() {
+  snapB64 = null;
+  $("snapPreview").removeAttribute("src");
+}
+
+let speakEnabled = false;
+let recognizer = null;
+let transcriptFinal = "";
+
+function setTranscript(text) {
+  $("transcript").textContent = text && text.trim() ? text : "(empty)";
+  $("liveQuestion").value = text;
+}
+
+function micStart() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    throw new Error("SpeechRecognition not supported in this browser.");
+  }
+  if (recognizer) return;
+
+  transcriptFinal = "";
+  setTranscript("");
+
+  recognizer = new SpeechRecognition();
+  recognizer.lang = "en-US";
+  recognizer.continuous = true;
+  recognizer.interimResults = true;
+
+  recognizer.onresult = (event) => {
+    let interim = "";
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const r = event.results[i];
+      const txt = (r[0] && r[0].transcript) ? r[0].transcript : "";
+      if (r.isFinal) transcriptFinal += txt;
+      else interim += txt;
+    }
+    setTranscript((transcriptFinal + " " + interim).trim());
+  };
+
+  recognizer.onerror = (e) => {
+    log(`Mic error: ${e.error || e.message || e}`);
+  };
+
+  recognizer.onend = () => {
+    recognizer = null;
+  };
+
+  recognizer.start();
+}
+
+function micStop() {
+  if (recognizer) recognizer.stop();
+  recognizer = null;
+}
+
+function toggleSpeak() {
+  speakEnabled = !speakEnabled;
+  $("btnSpeakToggle").textContent = `Speak: ${speakEnabled ? "On" : "Off"}`;
+  if (!speakEnabled && window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+function speak(text) {
+  if (!speakEnabled) return;
+  if (!window.speechSynthesis) return;
+  const cleaned = (text || "")
+    .replace(/\[[^\]]+\]/g, "")
+    .replace(/\nSources:[\s\S]*$/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!cleaned) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(cleaned);
+  u.rate = 1.0;
+  u.pitch = 1.0;
+  u.volume = 1.0;
+  window.speechSynthesis.speak(u);
+}
+
+async function liveAskDocs() {
+  const cfg = getCfg();
+  const q = $("liveQuestion").value.trim();
+  const k = parseInt($("liveTopK").value.trim() || "8", 10);
+  if (!q) return;
+
+  $("liveAnswer").textContent = "Thinking…";
+  $("liveSources").textContent = "";
+
+  const data = await apiJson("/api/ask", {
+    db_path: cfg.db_path,
+    question: q,
+    k,
+    model: cfg.model,
+    base_url: cfg.base_url,
+    temperature: cfg.temperature,
+  });
+
+  $("liveAnswer").textContent = data.answer || "";
+  if (data.sources && data.sources.length) {
+    $("liveSources").textContent = `Sources:\n- ${data.sources.join("\n- ")}`;
+  }
+  speak(data.answer || "");
+}
+
+async function liveAskVision() {
+  const cfg = getCfg();
+  const q = $("liveQuestion").value.trim();
+  const model = ($("visionModel").value || "").trim() || cfg.model;
+  if (!q) return;
+  if (!snapB64) throw new Error("Take a snapshot first.");
+
+  $("liveAnswer").textContent = "Analyzing snapshot…";
+  $("liveSources").textContent = "";
+
+  const data = await apiJson("/api/vision", {
+    question: q,
+    model: model,
+    base_url: cfg.base_url,
+    temperature: cfg.temperature,
+    image_b64: snapB64,
+  });
+
+  $("liveAnswer").textContent = data.answer || "";
+  $("liveSources").textContent = "Vision answer (no doc citations).";
+  speak(data.answer || "");
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   tabInit();
   refreshStatus();
@@ -248,5 +416,17 @@ window.addEventListener("DOMContentLoaded", () => {
   $("btnAsk").addEventListener("click", () => onAsk().catch(e => { $("answer").textContent = `Error: ${e.message}`; }));
   $("btnSearch").addEventListener("click", () => onSearch().catch(e => { $("searchResults").textContent = `Error: ${e.message}`; }));
   $("btnGraphQuery").addEventListener("click", () => onGraphQuery().catch(e => { $("graphResults").textContent = `Error: ${e.message}`; }));
-});
 
+  // Live controls
+  $("btnCamStart").addEventListener("click", () => camStart().catch(e => log(`Camera error: ${e.message}`)));
+  $("btnCamStop").addEventListener("click", () => camStop());
+  $("btnCamSnap").addEventListener("click", () => { try { camSnap(); } catch (e) { log(`Snapshot error: ${e.message}`); } });
+  $("btnSnapClear").addEventListener("click", () => snapClear());
+
+  $("btnMicStart").addEventListener("click", () => { try { micStart(); } catch (e) { log(`Mic error: ${e.message}`); } });
+  $("btnMicStop").addEventListener("click", () => micStop());
+  $("btnSpeakToggle").addEventListener("click", () => toggleSpeak());
+
+  $("btnLiveAskDocs").addEventListener("click", () => liveAskDocs().catch(e => { $("liveAnswer").textContent = `Error: ${e.message}`; }));
+  $("btnLiveAskVision").addEventListener("click", () => liveAskVision().catch(e => { $("liveAnswer").textContent = `Error: ${e.message}`; }));
+});
