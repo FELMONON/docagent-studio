@@ -1,0 +1,214 @@
+:root{
+  --bg0:#0b1020;
+  --bg1:#0f1b2d;
+  --card: rgba(255,255,255,0.06);
+  --card2: rgba(255,255,255,0.09);
+  --line: rgba(255,255,255,0.12);
+  --text:#e9eefc;
+  --muted: rgba(233,238,252,0.70);
+  --accent:#35d0ba;
+  --accent2:#ffb86b;
+  --danger:#ff6b6b;
+  --warn:#ffcc66;
+  --ok:#59f0a7;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  color:var(--text);
+  background: radial-gradient(1200px 700px at 15% 0%, #1b2948 0%, var(--bg0) 60%),
+              radial-gradient(900px 600px at 85% 10%, #1a3c3a 0%, var(--bg0) 60%),
+              linear-gradient(180deg, var(--bg0), var(--bg1));
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+}
+
+.bg{position:fixed; inset:0; pointer-events:none; overflow:hidden}
+.grid{
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(circle at 50% 0%, rgba(0,0,0,0.9), transparent 70%);
+  opacity:0.55;
+}
+.glow{position:absolute; width:900px; height:900px; filter: blur(80px); opacity:0.30}
+.glow-a{left:-280px; top:-360px; background: radial-gradient(circle, var(--accent) 0%, transparent 60%)}
+.glow-b{right:-340px; top:-300px; background: radial-gradient(circle, var(--accent2) 0%, transparent 60%)}
+
+.top{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:22px 28px;
+}
+.brand{display:flex; gap:14px; align-items:center}
+.logo{
+  width:42px; height:42px; border-radius:12px;
+  display:grid; place-items:center;
+  background: linear-gradient(135deg, rgba(53,208,186,0.18), rgba(255,184,107,0.16));
+  border:1px solid rgba(255,255,255,0.14);
+  font-family: var(--mono);
+  letter-spacing:0.08em;
+}
+.title{font-size:18px; font-weight:700; letter-spacing:0.01em}
+.subtitle{font-size:12px; color:var(--muted)}
+
+.status{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px;
+  border:1px solid rgba(255,255,255,0.14);
+  border-radius:14px;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(8px);
+}
+.dot{width:9px; height:9px; border-radius:999px; display:inline-block}
+.dot-warn{background:var(--warn)}
+.dot-ok{background:var(--ok)}
+.dot-bad{background:var(--danger)}
+.statusText{font-size:12px; color:var(--muted)}
+
+.layout{
+  display:grid;
+  grid-template-columns: 420px 1fr;
+  gap:18px;
+  padding: 0 28px 28px 28px;
+}
+
+.card{
+  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+  border-radius:18px;
+  padding:16px;
+  box-shadow: 0 20px 55px rgba(0,0,0,0.35);
+  backdrop-filter: blur(10px);
+  animation: rise .35s ease-out both;
+}
+@keyframes rise{from{opacity:0; transform: translateY(10px)} to{opacity:1; transform:translateY(0)}}
+
+.cardTitle{
+  font-weight:700;
+  margin-bottom:10px;
+  letter-spacing:0.02em;
+}
+.label{display:block; font-size:12px; color:var(--muted); margin:10px 0 6px}
+.input, .textarea{
+  width:100%;
+  border-radius:14px;
+  padding:10px 12px;
+  border:1px solid rgba(255,255,255,0.14);
+  background: rgba(8,12,22,0.60);
+  color:var(--text);
+  outline:none;
+}
+.input:focus, .textarea:focus{
+  border-color: rgba(53,208,186,0.55);
+  box-shadow: 0 0 0 4px rgba(53,208,186,0.12);
+}
+.mono{font-family:var(--mono)}
+.textarea{resize:vertical; min-height: 88px}
+
+.row{display:flex; gap:10px; align-items:flex-end}
+.col{flex:1}
+.sep{height:1px; background:rgba(255,255,255,0.10); margin:14px 0}
+
+.btn{
+  cursor:pointer;
+  border-radius:14px;
+  padding:10px 12px;
+  border:1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06);
+  color:var(--text);
+  font-weight:650;
+}
+.btn:hover{background: rgba(255,255,255,0.10)}
+.btn:active{transform: translateY(1px)}
+.btn.primary{
+  border-color: rgba(53,208,186,0.35);
+  background: linear-gradient(135deg, rgba(53,208,186,0.20), rgba(255,184,107,0.12));
+}
+
+.log{
+  margin-top:12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: pre-wrap;
+  background: rgba(0,0,0,0.30);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:14px;
+  padding:10px 12px;
+  min-height: 76px;
+  color: rgba(233,238,252,0.80);
+}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:12px;
+}
+.tab{
+  cursor:pointer;
+  border-radius:999px;
+  padding:8px 10px;
+  border:1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: rgba(233,238,252,0.80);
+  font-weight:650;
+  font-size:12px;
+}
+.tab.active{
+  background: rgba(53,208,186,0.14);
+  border-color: rgba(53,208,186,0.26);
+  color: var(--text);
+}
+
+.panel{display:none}
+.panel.active{display:block}
+
+.promptRow{display:flex; gap:12px; align-items:stretch}
+.side{width:170px; display:flex; flex-direction:column; gap:10px}
+
+.answer{
+  margin-top:14px;
+  padding:14px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  white-space: pre-wrap;
+  line-height:1.5;
+}
+.sources{
+  margin-top:10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.results{margin-top:12px; display:flex; flex-direction:column; gap:10px}
+.hit{
+  border:1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  border-radius:16px;
+  padding:12px;
+}
+.hitTop{display:flex; justify-content:space-between; gap:10px; align-items:center}
+.hitSrc{font-family: var(--mono); font-size: 12px; color: rgba(233,238,252,0.82)}
+.hitScore{font-family: var(--mono); font-size: 12px; color: rgba(233,238,252,0.65)}
+.hitPrev{margin-top:8px; color: rgba(233,238,252,0.78); font-size: 13px; line-height:1.35}
+.hitBtn{margin-top:10px}
+
+.foot{
+  padding: 0 28px 26px 28px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.muted{color:var(--muted)}
+
+@media (max-width: 980px){
+  .layout{grid-template-columns: 1fr; padding: 0 16px 20px}
+  .top{padding:18px 16px; gap:14px; flex-direction:column; align-items:flex-start}
+  .promptRow{flex-direction:column}
+  .side{width:100%; flex-direction:row; align-items:flex-end}
+}
+

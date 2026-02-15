@@ -1,0 +1,7 @@
+{"question":"What does attachment theory propose?","required_sources":["md:notes.md#L3"]}
+{"question":"Define secure base.","required_sources":["md:notes.md#L9"]}
+{"question":"What is context folding?","required_sources":["notion:notion_export/Projects/Context Folding RL.md#L1"]}
+{"question":"Why is context folding useful when a model has a limited context window?","required_sources":["notion:notion_export/Projects/Context Folding RL.md#L5"]}
+{"question":"List the practical pattern for context folding.","required_sources":["notion:notion_export/Projects/Context Folding RL.md#L9"]}
+{"question":"According to the sample PDF, what is hybrid retrieval?","required_sources":["pdf:sample.pdf#p1"]}
+{"question":"What does --notion-root change about citations?","required_sources":["notion:notion_export/Home.md#L9"]}

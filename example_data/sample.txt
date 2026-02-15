@@ -1,0 +1,7 @@
+DocAgent Sample PDF
+
+This is a small PDF used for smoke testing PDF ingestion.
+
+Key terms:
+- Hybrid retrieval combines lexical (FTS/BM25) and vector similarity.
+- Citations are source references like pdf:sample.pdf#p1.

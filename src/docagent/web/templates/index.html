@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DocAgent Studio</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="bg">
+      <div class="grid"></div>
+      <div class="glow glow-a"></div>
+      <div class="glow glow-b"></div>
+    </div>
+
+    <header class="top">
+      <div class="brand">
+        <div class="logo">DA</div>
+        <div>
+          <div class="title">DocAgent Studio</div>
+          <div class="subtitle">Local-first PDF + Notion + Markdown assistant with citations</div>
+        </div>
+      </div>
+
+      <div class="status" id="status">
+        <span class="dot dot-warn" id="statusDot"></span>
+        <span class="statusText" id="statusText">Checking Ollama…</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="card setup">
+        <div class="cardTitle">Workspace</div>
+
+        <label class="label">DB Path</label>
+        <input class="input mono" id="dbPath" value="{{ db_path }}" />
+
+        <div class="row">
+          <div class="col">
+            <label class="label">Ollama Base URL</label>
+            <input class="input mono" id="ollamaBaseUrl" value="{{ ollama_base_url }}" />
+          </div>
+          <div class="col">
+            <label class="label">Ollama Model</label>
+            <input class="input mono" id="ollamaModel" value="{{ ollama_model }}" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label class="label">Temperature</label>
+            <input class="input mono" id="temperature" value="{{ ollama_temperature }}" />
+          </div>
+          <div class="col">
+            <label class="label">Embedding Model</label>
+            <input class="input mono" id="embedModel" value="{{ embed_model }}" />
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="cardTitle">Ingest</div>
+        <label class="label">Docs Folder Path (server-side)</label>
+        <input class="input mono" id="inputDir" placeholder="/path/to/docs (optional if you upload files)" />
+
+        <label class="label">Notion Root Path (optional)</label>
+        <input class="input mono" id="notionRoot" placeholder="/path/to/notion/export/root" />
+
+        <label class="label">Upload Files (PDF/MD or Notion zip)</label>
+        <input class="input" id="fileUpload" type="file" multiple />
+
+        <div class="row">
+          <button class="btn primary" id="btnIngest">Ingest</button>
+          <button class="btn" id="btnIndex">Build Index</button>
+          <button class="btn" id="btnGraph">Build Graph</button>
+        </div>
+
+        <div class="log" id="workspaceLog"></div>
+      </section>
+
+      <section class="card chat">
+        <div class="tabs">
+          <button class="tab active" data-tab="chat">Chat</button>
+          <button class="tab" data-tab="search">Search</button>
+          <button class="tab" data-tab="graph">Graph</button>
+        </div>
+
+        <div class="panel active" id="panel-chat">
+          <div class="promptRow">
+            <textarea class="textarea" id="question" rows="3" placeholder="Ask a question about your docs…"></textarea>
+            <div class="side">
+              <label class="label">Top-K</label>
+              <input class="input mono" id="topK" value="8" />
+              <button class="btn primary" id="btnAsk">Ask</button>
+            </div>
+          </div>
+
+          <div class="answer" id="answer"></div>
+          <div class="sources" id="sources"></div>
+        </div>
+
+        <div class="panel" id="panel-search">
+          <div class="row">
+            <input class="input mono" id="searchQuery" placeholder="Search query…" />
+            <button class="btn primary" id="btnSearch">Search</button>
+          </div>
+          <div class="results" id="searchResults"></div>
+        </div>
+
+        <div class="panel" id="panel-graph">
+          <div class="row">
+            <input class="input mono" id="graphQuery" placeholder="Graph query (entity)…" />
+            <button class="btn primary" id="btnGraphQuery">Query</button>
+          </div>
+          <div class="results" id="graphResults"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <span class="muted">Tip: run <span class="mono">docagent doctor --db …</span> if something looks off.</span>
+    </footer>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
+
