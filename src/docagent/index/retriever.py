@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import math
 import re
 import sqlite3
 from dataclasses import dataclass
@@ -54,8 +53,8 @@ class HybridRetriever:
 
         for cid in all_ids:
             v = vec_map.get(cid, 0.0)
-            l = lex_map.get(cid, 0.0)
-            scores[cid] = self.alpha * v + (1.0 - self.alpha) * l
+            lex = lex_map.get(cid, 0.0)
+            scores[cid] = self.alpha * v + (1.0 - self.alpha) * lex
 
         top_ids = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:k]
         ordered_ids = [cid for cid, _ in top_ids]
